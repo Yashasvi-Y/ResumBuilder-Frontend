@@ -3,10 +3,11 @@ import html2canvas from "html2canvas";
 import moment from "moment"
 
 /**
- * Validate email format.
+ * Validate email format - stricter validation
+ * Rejects: @g.c, @domain, missing extension
  */
 export const validateEmail = (email) => {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
   return regex.test(email)
 }
 
@@ -100,6 +101,33 @@ export const getLightColorFromImage = (imageUrl) => {
  */
 export function formatYearMonth(yearMonth) {
   return yearMonth ? moment(yearMonth, "YYYY-MM").format("MMM YYYY") : ""
+}
+
+/**
+ * Format date range with "Present" for ongoing roles
+ * If endDate is >= today, shows "Present" instead
+ */
+export function formatDateRange(startDate, endDate) {
+  if (!startDate) return "";
+
+  const today = moment().startOf("month");
+  const start = moment(startDate, "YYYY-MM");
+  const end = endDate ? moment(endDate, "YYYY-MM") : null;
+
+  const startFormatted = start.format("MMM YYYY");
+
+  // If no end date → ongoing
+  if (!end) return `${startFormatted} - Present`;
+
+  const endFormatted = end.format("MMM YYYY");
+
+  // If end date is current or future → mark as ongoing
+  if (end.isSameOrAfter(today, "month")) {
+    return `${startFormatted} - ${endFormatted} (Ongoing)`;
+  }
+
+  // Past dates → normal range
+  return `${startFormatted} - ${endFormatted}`;
 }
 
 /**

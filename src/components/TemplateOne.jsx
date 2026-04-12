@@ -7,7 +7,7 @@ import {
   ProjectInfo,
   CertificationInfo,
 } from "./ResumeSection";
-import { formatYearMonth } from "../utils/helper";
+import { formatYearMonth, formatDateRange } from "../utils/helper";
 
 const DEFAULT_THEME = ["#ffffff", "#0d47a1", "#1e88e5", "#64b5f6", "#bbdefb"];
 
@@ -134,9 +134,7 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
                     key={i}
                     company={exp.company}
                     role={exp.role}
-                    duration={`${formatYearMonth(exp.startDate)} - ${formatYearMonth(
-                      exp.endDate
-                    )}`}
+                    duration={formatDateRange(exp.startDate, exp.endDate)}
                     description={exp.description}
                     durationColor={[2]}
                     
@@ -146,11 +144,11 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
             </div>
           )}
 
-          {projects.length > 0 && (
+          {projects.length > 0 && projects.some(proj => proj.title?.trim()) && (
             <div className="resume-section">
               <Title text="Projects" />
               <div className="space-y-4">
-                {projects.map((proj, i) => (
+                {projects.filter(proj => proj.title?.trim()).map((proj, i) => (
                   <ProjectInfo
                     key={i}
                     title={proj.title}
@@ -168,11 +166,11 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
 
         {/* Right Column */}
         <div className="col-span-1 space-y-6">
-          {skills.length > 0 && (
+          {skills.length > 0 && skills.some(skill => skill.name?.trim()) && (
             <div className="resume-section">
               <Title text="Skills" />
               <div className="flex flex-wrap gap-2">
-                {skills.map((skill, i) => (
+                {skills.filter(skill => skill.name?.trim()).map((skill, i) => (
                   <span
                     key={i}
                     className="text-xs font-medium px-2 py-1 rounded"
@@ -185,11 +183,11 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
             </div>
           )}
 
-          {education.length > 0 && (
+          {education.length > 0 && education.some(edu => edu.degree?.trim() || edu.institution?.trim()) && (
             <div className="resume-section">
               <Title text="Education" />
               <div className="space-y-4 pb-2">
-                {education.map((edu, i) => (
+                {education.filter(edu => edu.degree?.trim() || edu.institution?.trim()).map((edu, i) => (
                   <EducationInfo
                     key={i}
                     degree={edu.degree}
@@ -205,16 +203,17 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
             </div>
           )}
 
-          {certifications.length > 0 && (
+          {certifications.length > 0 && certifications.some(cert => cert.title?.trim() || cert.issuer?.trim()) && (
             <div className="resume-section">
               <Title text="Certifications" />
               <div className="space-y-2">
-                {certifications.map((cert, i) => (
+                {certifications.filter(cert => cert.title?.trim() || cert.issuer?.trim()).map((cert, i) => (
                   <CertificationInfo
                     key={i}
                     title={cert.title}
                     issuer={cert.issuer}
                     year={cert.year}
+                    link={cert.link}
                     bgColor={[4]}
                    
                   />
@@ -223,11 +222,11 @@ const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
             </div>
           )}
 
-          {languages.length > 0 && (
+          {languages.length > 0 && languages.some(lang => lang.name?.trim()) && (
             <div className="resume-section">
               <Title text="Languages" />
               <div className="flex flex-wrap gap-2">
-                {languages.map((lang, i) => (
+                {languages.filter(lang => lang.name?.trim()).map((lang, i) => (
                   <span
                     key={i}
                     className="text-xs font-medium px-2 py-1 rounded"

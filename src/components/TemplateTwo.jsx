@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { LuExternalLink, LuGithub } from "react-icons/lu";
-import { formatYearMonth } from "../utils/helper";
+import { formatYearMonth, formatDateRange } from "../utils/helper";
 
 const sectionTitleClass = "text-base font-bold uppercase tracking-wide mb-1 pb-1 border-b border-gray-300";
 
@@ -95,7 +95,7 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
                   </div>
                   <div className="text-[11px] text-right text-gray-600">
                     <p className="italic">
-                      {formatYearMonth(exp.startDate)} - {formatYearMonth(exp.endDate)}
+                      {formatDateRange(exp.startDate, exp.endDate)}
                     </p>
                     {exp.location && <p className="text-[11px]">{exp.location}</p>}
                   </div>
@@ -117,11 +117,11 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
       )}
 
       {/* Projects */}
-      {projects.length > 0 && (
+      {projects.length > 0 && projects.some(proj => proj.title?.trim()) && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Projects</h2>
           <div className="space-y-2">
-            {projects.map((proj, idx) => (
+            {projects.filter(proj => proj.title?.trim()).map((proj, idx) => (
               <div key={idx} className="space-y-0.5">
                 <div className="flex justify-between items-start">
                   <h3 className="font-semibold text-[12px] text-gray-800">{proj.title}</h3>
@@ -156,11 +156,11 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
       )}
 
       {/* Education */}
-      {education.length > 0 && (
+      {education.length > 0 && education.some(edu => edu.degree?.trim() || edu.institution?.trim()) && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Education</h2>
-          <div className="space-y-1">
-            {education.map((edu, idx) => (
+          <div className="space-y-2">
+            {education.filter(edu => edu.degree?.trim() || edu.institution?.trim()).map((edu, idx) => (
               <div key={idx} className="space-y-0.25">
                 <div className="flex justify-between items-center">
                   <h3 className="font-semibold text-[12px] pb-2 text-gray-800">{edu.degree}</h3>
@@ -181,11 +181,11 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
       )}
 
       {/* Skills */}
-      {skills.length > 0 && (
+      {skills.length > 0 && skills.some(skill => skill.name?.trim()) && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Skills</h2>
           <ul className="text-[11px] text-gray-800 flex flex-wrap gap-1">
-            {skills.map((skill, idx) => (
+            {skills.filter(skill => skill.name?.trim()).map((skill, idx) => (
               <li key={idx} className="w-fit">{skill.name}</li>
             ))}
           </ul>
@@ -193,13 +193,21 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
       )}
 
       {/* Certifications */}
-      {certifications.length > 0 && (
+      {certifications.length > 0 && certifications.some(cert => cert.title?.trim() || cert.issuer?.trim()) && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Certifications</h2>
           <ul className="list-disc list-inside text-[11px] text-gray-700">
-            {certifications.map((cert, idx) => (
+            {certifications.filter(cert => cert.title?.trim() || cert.issuer?.trim()).map((cert, idx) => (
               <li key={idx} className="leading-tight">
                 {cert.title} — {cert.issuer} ({cert.year})
+                {cert.link && (
+                  <>
+                    {" — "}
+                    <a href={cert.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      View
+                    </a>
+                  </>
+                )}
               </li>
             ))}
           </ul>
@@ -210,11 +218,11 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
       {(languages.length > 0 || interests.length > 0) && (
         <section className="mb-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {languages.length > 0 && (
+            {languages.length > 0 && languages.some(lang => lang.name?.trim()) && (
               <div>
                 <h2 className={sectionTitleClass}>Languages</h2>
                 <ul className="flex flex-wrap gap-1 text-[11px] text-gray-700">
-                  {languages.map((lang, idx) => (
+                  {languages.filter(lang => lang.name?.trim()).map((lang, idx) => (
                     <li key={idx} className="bg-gray-100 px-1.5 py-0.5 rounded-full">
                       {lang.name}
                     </li>

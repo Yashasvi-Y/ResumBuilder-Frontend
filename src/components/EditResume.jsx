@@ -280,9 +280,7 @@ const EditResume = () => {
         if (resumeData.languages.length === 0 || !resumeData.languages[0].name?.trim()) {
           errors.push("At least one language is required")
         }
-        if (resumeData.interests.length === 0 || !resumeData.interests[0]?.trim()) {
-          errors.push("At least one interest is required")
-        }
+        // Interests are optional
         break
 
       default:

@@ -7,6 +7,7 @@ import Modal from "../components/Modal";
 import { UserContext } from "../context/userContext";
 import { ProfileInfoCard } from "../components/Cards";
 import { landingPageStyles } from "../assets/dummystyle";
+import axiosInstance from "../utils/axiosInstance";
 
 const LandingPage = () => {
   const { user } = useContext(UserContext);
@@ -15,6 +16,11 @@ const LandingPage = () => {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState("login");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [stats, setStats] = useState({
+    totalResumes: "50K+",
+    averageRating: "4.9",
+    totalUsers: "0"
+  });
 
   const handleCTA = () => {
     if (!user) {
@@ -23,6 +29,28 @@ const LandingPage = () => {
       navigate("/dashboard");
     }
   };
+
+  // Fetch stats from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axiosInstance.get("/api/stats/overall");
+        if (response.data.success) {
+          const { totalResumes, totalUsers, averageRating } = response.data.stats;
+          setStats({
+            totalResumes: totalResumes > 1000 ? `${(totalResumes / 1000).toFixed(1)}K+` : totalResumes.toString(),
+            averageRating: averageRating.toFixed(1),
+            totalUsers: totalUsers > 0 ? `${totalUsers.toLocaleString()}` : "0"
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+        // Keep default stats
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -148,9 +176,9 @@ const LandingPage = () => {
               {/* Stats */}
               <div className={landingPageStyles.statsContainer}>
                 {[
-                  { value: '50K+', label: 'Resumes Created', gradient: 'from-violet-600 to-fuchsia-600' },
-                  { value: '4.9★', label: 'User Rating', gradient: 'from-orange-500 to-red-500' },
-                  { value: '5 Min', label: 'Build Time', gradient: 'from-emerald-500 to-teal-500' }
+                  { value: stats.totalResumes, label: 'Resumes Created', gradient: 'from-violet-600 to-fuchsia-600' },
+                  { value: `${stats.averageRating}★`, label: 'User Rating', gradient: 'from-orange-500 to-red-500' },
+                  { value: stats.totalUsers, label: 'Happy Users', gradient: 'from-emerald-500 to-teal-500' }
                 ].map((stat, idx) => (
                   <div key={idx} className={landingPageStyles.statItem}>
                     <div className={`${landingPageStyles.statNumber} ${stat.gradient}`}>{stat.value}</div>

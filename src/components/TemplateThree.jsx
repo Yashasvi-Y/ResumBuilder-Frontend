@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { formatYearMonth } from "../utils/helper";
+import { formatYearMonth, formatDateRange } from "../utils/helper";
 
 const TemplateThree = ({ resumeData = {}, containerWidth }) => {
   const {
@@ -150,11 +150,11 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
           </section>
 
           {/* Education */}
-          {education.length > 0 && (
+          {education.length > 0 && education.some(edu => edu.degree?.trim() || edu.institution?.trim()) && (
             <section>
               <h2 className="text-sm font-bold uppercase text-gray-800 mb-3 tracking-wider">EDUCATION</h2>
               <div className="space-y-3">
-                {education.map((edu, idx) => (
+                {education.filter(edu => edu.degree?.trim() || edu.institution?.trim()).map((edu, idx) => (
                   <div key={idx} className="text-xs">
                     <h3 className="font-bold pb-2">{edu.institution}</h3>
                     <p className=" pb-2 ">{edu.degree}</p>
@@ -165,23 +165,33 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
           )}
 
           {/* Certifications */}
-          {certifications.length > 0 && (
+          {certifications.length > 0 && certifications.some(cert => cert.title?.trim() || cert.issuer?.trim()) && (
             <section>
               <h2 className="text-sm font-bold uppercase text-gray-800 mb-2 tracking-wider">CERTIFICATIONS</h2>
               <ul className="text-xs text-gray-700 space-y-1">
-                {certifications.map((cert, idx) => (
-                  <li key={idx}>{cert.title} ({cert.year})</li>
+                {certifications.filter(cert => cert.title?.trim() || cert.issuer?.trim()).map((cert, idx) => (
+                  <li key={idx}>
+                    {cert.title} ({cert.year})
+                    {cert.link && (
+                      <>
+                        {" — "}
+                        <a href={cert.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          View
+                        </a>
+                      </>
+                    )}
+                  </li>
                 ))}
               </ul>
             </section>
           )}
 
           {/* Interests */}
-          {interests.length > 0 && (
+          {interests.length > 0 && interests.some(interest => interest?.trim?.()) && (
             <section>
               <h2 className="text-sm font-bold uppercase text-gray-800 mb-2 tracking-wider">INTERESTS</h2>
               <ul className="text-xs text-gray-700 space-y-1">
-                {interests.map((interest, idx) => (
+                {interests.filter(interest => interest?.trim?.()).map((interest, idx) => (
                   <li key={idx}>• {interest}</li>
                 ))}
               </ul>
@@ -205,7 +215,7 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
                       </div>
                       {exp.startDate && exp.endDate && (
                         <div className="text-right italic">
-                          {formatYearMonth(exp.startDate)} – {formatYearMonth(exp.endDate)}
+                          {formatDateRange(exp.startDate, exp.endDate)}
                         </div>
                       )}
                     </div>
@@ -222,11 +232,11 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
           )}
 
           {/* Projects Section */}
-          {projects.length > 0 && (
+          {projects.length > 0 && projects.some(proj => proj.title?.trim()) && (
             <section>
               <h2 className="text-sm font-bold uppercase text-gray-800 mb-3 tracking-wider border-b border-gray-400 pb-1">PROJECTS</h2>
-              <div className="space-y-4">
-                {projects.map((proj, idx) => (
+              <div className="space-y-5">
+                {projects.filter(proj => proj.title?.trim()).map((proj, idx) => (
                   <div key={idx} className="text-xs">
                     <div className="flex justify-between items-start">
                       <h3 className="font-bold">{proj.title}</h3>

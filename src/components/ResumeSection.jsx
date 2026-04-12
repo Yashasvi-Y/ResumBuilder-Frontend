@@ -17,13 +17,23 @@ export const ActionLink = ({ icon, link, bgColor }) => (
   </div>
 );
 
-export const CertificationInfo = ({ title, issuer, year, bgColor }) => (
+export const CertificationInfo = ({ title, issuer, year, link, bgColor }) => (
   <div className={styles.certContainer}>
     <h3 className={styles.certTitle}>{title}</h3>
     <div className={styles.certRow}>
       {year && <div className={styles.certYear(bgColor)} style={{ backgroundColor: bgColor }}>{year}</div>}
       <p className={styles.certIssuer}>{issuer}</p>
     </div>
+    {link && (
+      <a 
+        href={link} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:underline text-xs mt-1 inline-block"
+      >
+        View Certificate →
+      </a>
+    )}
   </div>
 );
 

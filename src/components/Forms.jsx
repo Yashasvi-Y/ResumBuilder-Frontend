@@ -3,6 +3,8 @@
 import { Input } from "./Inputs";
 import { RatingInput } from "./ResumeSection";
 import { Plus, Trash2 } from "lucide-react";
+import { getTodayDateString, isValidDateRange } from "../utils/dateValidator";
+import AISuggestionButton from "./AISuggestionButton";
 import {
   commonStyles,
   additionalInfoStyles,
@@ -121,6 +123,7 @@ export const CertificationInfoForm = ({ certifications, updateArrayItem, addArra
               <Input
                 label="Certificate Title"
                 placeholder="Full Stack Web Developer"
+                required={true}
                 value={cert.title || ""}
                 onChange={({ target }) => updateArrayItem(index, "title", target.value)}
               />
@@ -137,6 +140,14 @@ export const CertificationInfoForm = ({ certifications, updateArrayItem, addArra
                 placeholder="2024"
                 value={cert.year || ""}
                 onChange={({ target }) => updateArrayItem(index, "year", target.value)}
+              />
+
+              <Input
+                label="Link (optional)"
+                placeholder="https://certificate-link.com"
+                type="url"
+                value={cert.link || ""}
+                onChange={({ target }) => updateArrayItem(index, "link", target.value)}
               />
             </div>
 
@@ -160,6 +171,7 @@ export const CertificationInfoForm = ({ certifications, updateArrayItem, addArra
               title: "",
               issuer: "",
               year: "",
+              link: "",
             })
           }
         >
@@ -191,6 +203,7 @@ export const ContactInfoForm = ({ contactInfo, updateSection }) => {
           label="Email"
           placeholder="john@example.com"
           type="email"
+          required={true}
           value={contactInfo.email || ""}
           onChange={({ target }) => updateSection("email", target.value)}
         />
@@ -198,6 +211,7 @@ export const ContactInfoForm = ({ contactInfo, updateSection }) => {
         <Input
           label="Phone Number"
           placeholder="1234567890"
+          required={true}
           value={contactInfo.phone || ""}
           onChange={({ target }) => updateSection("phone", target.value)}
         />
@@ -241,6 +255,7 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
               <Input
                 label="Degree"
                 placeholder="BTech in Computer Science"
+                required={true}
                 value={education.degree || ""}
                 onChange={({ target }) => updateArrayItem(index, "degree", target.value)}
               />
@@ -248,6 +263,7 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
               <Input
                 label="Institution"
                 placeholder="XYZ University"
+                required={true}
                 value={education.institution || ""}
                 onChange={({ target }) => updateArrayItem(index, "institution", target.value)}
               />
@@ -255,6 +271,7 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
               <Input
                 label="Start Date"
                 type="month"
+                max={getTodayDateString()}
                 value={education.startDate || ""}
                 onChange={({ target }) => updateArrayItem(index, "startDate", target.value)}
               />
@@ -265,6 +282,12 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
                 value={education.endDate || ""}
                 onChange={({ target }) => updateArrayItem(index, "endDate", target.value)}
               />
+              
+              {education.endDate && education.startDate && !isValidDateRange(education.startDate, education.endDate) && (
+                <div className="md:col-span-2 text-red-500 text-sm font-semibold">
+                  ⚠️ End date must be after or equal to start date
+                </div>
+              )}
             </div>
             {educationInfo.length > 1 && (
               <button
@@ -308,26 +331,45 @@ export const ProfileInfoForm = ({ profileData, updateSection }) => {
           <Input
             label="Full Name"
             placeholder="John Doe"
+            required={true}
             value={profileData.fullName || ""}
             onChange={({ target }) => updateSection("fullName", target.value)}
           />
 
-          <Input
-            label="Designation"
-            placeholder="Full Stack Developer"
-            value={profileData.designation || ""}
-            onChange={({ target }) => updateSection("designation", target.value)}
-          />
+          <div className="md:col-span-2">
+            <label className="block text-sm font-bold text-slate-700 mb-3">Designation</label>
+            <input
+              placeholder="Full Stack Developer"
+              value={profileData.designation || ""}
+              onChange={({ target }) => updateSection("designation", target.value)}
+              className={profileInfoStyles.textarea}
+            />
+          </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-3">Summary</label>
-            <textarea
-              className={profileInfoStyles.textarea}
-              rows={4}
-              placeholder="Short introduction about yourself"
-              value={profileData.summary || ""}
-              onChange={({ target }) => updateSection("summary", target.value)}
-            />
+            <label className="block text-sm font-bold text-slate-700 mb-3">
+              Summary
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <div className="flex gap-2 items-start">
+              <textarea
+                className={profileInfoStyles.textarea}
+                rows={4}
+                placeholder="Short introduction about yourself"
+                value={profileData.summary || ""}
+                onChange={({ target }) => updateSection("summary", target.value)}
+              />
+              <AISuggestionButton
+                type="summary"
+                data={{
+                  jobTitle: profileData.designation || "Professional",
+                  experience: "5",
+                  skills: [],
+                }}
+                onApply={(suggestion) => updateSection("summary", suggestion)}
+                buttonClass="text-blue-600 hover:text-blue-800 flex-shrink-0 mt-2"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -348,6 +390,7 @@ export const ProjectDetailForm = ({ projectInfo, updateArrayItem, addArrayItem, 
                 <Input
                   label="Project Title"
                   placeholder="Portfolio Website"
+                  required={true}
                   value={project.title || ""}
                   onChange={({ target }) => updateArrayItem(index, "title", target.value)}
                 />
@@ -423,6 +466,7 @@ export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, remo
               <Input
                 label="Skill Name"
                 placeholder="JavaScript"
+                required={true}
                 value={skill.name || ""}
                 onChange={({ target }) => updateArrayItem(index, "name", target.value)}
               />
@@ -484,6 +528,7 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
               <Input
                 label="Company"
                 placeholder="ABC Corp"
+                required={true}
                 value={experience.company || ""}
                 onChange={({ target }) => updateArrayItem(index, "company", target.value)}
               />
@@ -491,6 +536,7 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
               <Input
                 label="Role"
                 placeholder="Frontend Developer"
+                required={true}
                 value={experience.role || ""}
                 onChange={({ target }) => updateArrayItem(index, "role", target.value)}
               />
@@ -498,6 +544,7 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
               <Input
                 label="Start Date"
                 type="month"
+                max={getTodayDateString()}
                 value={experience.startDate || ""}
                 onChange={({ target }) => updateArrayItem(index, "startDate", target.value)}
               />
@@ -508,6 +555,12 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
                 value={experience.endDate || ""}
                 onChange={({ target }) => updateArrayItem(index, "endDate", target.value)}
               />
+              
+              {experience.endDate && experience.startDate && !isValidDateRange(experience.startDate, experience.endDate) && (
+                <div className="md:col-span-2 text-red-500 text-sm font-semibold">
+                  ⚠️ End date must be after or equal to start date
+                </div>
+              )}
             </div>
 
             <div className="mt-6">

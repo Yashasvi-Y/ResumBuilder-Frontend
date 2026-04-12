@@ -2,13 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Eye, EyeOff, Edit, Camera, Trash2, Check } from 'lucide-react';
 import { inputStyles, photoSelectorStyles, titleInputStyles } from '../assets/dummystyle';
 
-export const Input = ({ value, onChange, label, placeholder, type = 'text' }) => {
+export const Input = ({ value, onChange, label, placeholder, type = 'text', required = false, max, disabled = false, maxLength }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const styles = inputStyles;
   return (
     <div className={styles.wrapper}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && (
+        <label className={styles.label}>
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
       <div className={styles.inputContainer(isFocused)}>
         <input
           type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
@@ -18,6 +23,9 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text' }) =>
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          max={max}
+          disabled={disabled}
+          maxLength={maxLength}
         />
         {type === 'password' && (
           <button type="button" onClick={() => setShowPassword(!showPassword)} className={styles.toggleButton}>
@@ -100,31 +108,37 @@ export const TitleInput = ({ title, setTitle }) => {
   const styles = titleInputStyles;
 
   return (
-    <div className={styles.container}>
-      {editing ? (
-        <>
-          <input
-            type="text"
-            placeholder="Resume title"
-            className={styles.inputField(focused)}
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            autoFocus
-          />
-          <button className={styles.confirmButton} onClick={() => setEditing(false)}>
-            <Check className="w-5 h-5" />
-          </button>
-        </>
-      ) : (
-        <>
-          <h2 className={styles.titleText}>{title}</h2>
-          <button className={styles.editButton} onClick={() => setEditing(true)}>
-            <Edit className={styles.editIcon} />
-          </button>
-        </>
-      )}
+    <div>
+      <label className="block text-sm font-bold text-slate-700 mb-2">
+        Resume Title
+        <span className="text-red-500 ml-1">*</span>
+      </label>
+      <div className={styles.container}>
+        {editing ? (
+          <>
+            <input
+              type="text"
+              placeholder="Resume title"
+              className={styles.inputField(focused)}
+              value={title}
+              onChange={({ target }) => setTitle(target.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              autoFocus
+            />
+            <button className={styles.confirmButton} onClick={() => setEditing(false)}>
+              <Check className="w-5 h-5" />
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 className={styles.titleText}>{title}</h2>
+            <button className={styles.editButton} onClick={() => setEditing(true)}>
+              <Edit className={styles.editIcon} />
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

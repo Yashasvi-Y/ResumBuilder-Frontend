@@ -5,12 +5,14 @@ import { validateEmail } from '../utils/helper';
 import { UserContext } from '../context/userContext';
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
+import ForgotPassword from './ForgotPassword';
 import { authStyles as styles } from '../assets/dummystyle';
 
 const Login = ({ setCurrentPage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -38,6 +40,10 @@ const Login = ({ setCurrentPage }) => {
     }
   };
 
+  if (showForgotPassword) {
+    return <ForgotPassword onBack={() => setShowForgotPassword(false)} />;
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.headerWrapper}>
@@ -63,6 +69,15 @@ const Login = ({ setCurrentPage }) => {
         <button type="submit" className={styles.submitButton}>
           Sign In
         </button>
+        <p className={styles.switchText}>
+          <button 
+            type="button" 
+            className={styles.switchButton}
+            onClick={() => setShowForgotPassword(true)}
+          >
+            Forgot Password?
+          </button>
+        </p>
         <p className={styles.switchText}>
           Don't have an account?{' '}
           <button type="button" className={styles.switchButton} onClick={() => setCurrentPage('signup')}>
