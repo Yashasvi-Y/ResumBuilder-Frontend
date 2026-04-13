@@ -16,10 +16,11 @@ const LandingPage = () => {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState("login");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [stats, setStats] = useState({
-    totalResumes: "50K+",
-    averageRating: "4.9",
-    totalUsers: "0"
+    totalResumes: null,
+    averageRating: null,
+    totalUsers: null
   });
 
   const handleCTA = () => {
@@ -33,6 +34,7 @@ const LandingPage = () => {
   // Fetch stats from API
   useEffect(() => {
     const fetchStats = async () => {
+      setStatsLoading(true);
       try {
         const response = await axiosInstance.get("/api/stats/overall");
         if (response.data.success) {
@@ -45,7 +47,14 @@ const LandingPage = () => {
         }
       } catch (error) {
         console.error("Error fetching stats:", error);
-        // Keep default stats
+        // Set default fallback stats
+        setStats({
+          totalResumes: "—",
+          averageRating: "4.9",
+          totalUsers: "—"
+        });
+      } finally {
+        setStatsLoading(false);
       }
     };
 
@@ -181,7 +190,9 @@ const LandingPage = () => {
                   { value: stats.totalUsers, label: 'Happy Users', gradient: 'from-emerald-500 to-teal-500' }
                 ].map((stat, idx) => (
                   <div key={idx} className={landingPageStyles.statItem}>
-                    <div className={`${landingPageStyles.statNumber} ${stat.gradient}`}>{stat.value}</div>
+                    <div className={`${landingPageStyles.statNumber} ${stat.gradient} ${statsLoading ? 'animate-pulse bg-gray-300' : ''}`}>
+                      {statsLoading ? '...' : stat.value}
+                    </div>
                     <div className={landingPageStyles.statLabel}>{stat.label}</div>
                   </div>
                 ))}
