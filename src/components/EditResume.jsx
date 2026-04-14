@@ -526,7 +526,18 @@ const EditResume = () => {
         throw new Error("Thumbnail element not found")
       }
 
+      console.log("🎯 Thumbnail element found:", thumbnailElement)
+      
+      // Temporarily show the element to get correct dimensions
+      const originalDisplay = thumbnailElement.style.display
+      const originalVisibility = thumbnailElement.style.visibility
+      thumbnailElement.style.display = "block"
+      thumbnailElement.style.visibility = "visible"
+      
+      console.log("📏 Dimensions:", thumbnailElement.getBoundingClientRect())
+
       const fixedThumbnail = fixTailwindColors(thumbnailElement)
+      console.log("✅ Colors fixed, element:", fixedThumbnail)
 
       const thumbnailCanvas = await html2canvas(fixedThumbnail, {
         scale: 0.5,
@@ -534,13 +545,23 @@ const EditResume = () => {
         logging: false,
       })
 
-      document.body.removeChild(fixedThumbnail)
+      console.log("🖼️ Canvas created:", thumbnailCanvas.width, "x", thumbnailCanvas.height)
+
+      // Clean up - remove clone and restore original visibility
+      if (fixedThumbnail.parentNode) {
+        document.body.removeChild(fixedThumbnail)
+      }
+      thumbnailElement.style.display = originalDisplay
+      thumbnailElement.style.visibility = originalVisibility
 
       const thumbnailDataUrl = thumbnailCanvas.toDataURL("image/png")
+      console.log("📷 DataURL length:", thumbnailDataUrl.length)
+
       const thumbnailFile = dataURLtoFile(
         thumbnailDataUrl,
         `thumbnail-${resumeId}.png`
       )
+      console.log("📁 File created:", thumbnailFile.name, "Size:", thumbnailFile.size)
 
       const formData = new FormData()
       formData.append("thumbnail", thumbnailFile)

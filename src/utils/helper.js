@@ -136,8 +136,22 @@ export function formatDateRange(startDate, endDate) {
  * values remain. This runs on a given rootElement and all its descendants.
  */
 export const fixTailwindColors = (rootElement) => {
-  if (!rootElement) return
-  const elements = rootElement.querySelectorAll("*")
+  if (!rootElement) return null
+  
+  // Clone the element so we don't modify the original DOM
+  const clone = rootElement.cloneNode(true)
+  clone.style.position = "absolute"
+  clone.style.top = "-9999px"
+  clone.style.left = "0"
+  clone.style.opacity = "0"
+  
+  const { width, height } = rootElement.getBoundingClientRect()
+  clone.style.width = `${width}px`
+  clone.style.height = `${height}px`
+  
+  document.body.appendChild(clone)
+  
+  const elements = clone.querySelectorAll("*")
   elements.forEach((el) => {
     const style = window.getComputedStyle(el)
       ;["color", "backgroundColor", "borderColor"].forEach((prop) => {
@@ -159,6 +173,8 @@ export const fixTailwindColors = (rootElement) => {
       }
     }
   })
+  
+  return clone
 }
 
 /**
